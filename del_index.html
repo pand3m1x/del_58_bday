@@ -1,0 +1,176 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1">
+        <title>Happy Birthday Del</title>
+
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Happy+Monkey&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="del_styles.css">
+</head>
+    <body>
+        <audio id="bg-music" preload="auto" loop playsinline>
+        <source src="audio/massobeats-city.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+        </audio>
+        <div id="music-ui" aria-live="polite">
+        <button id="music-unmute" aria-pressed="false" aria-label="Unmute music" class="music-btn">🔊 Unmute</button>
+        </div>
+        <div id="header">
+            <h1>🎉🏈Happy Birthday Del!🏈🎉</h1>
+            <img id="step-dad" src="./images/Del.png" alt="Del smiling at camera.">
+            <h2 id="bday-age">58 years old!</h2>
+            <h4 id="bday-date">12.24</h4>
+        </div>
+        
+        <div class="gift-section">
+            <h2 class="gift-title">Let's get the party started!</h2>
+            <h3 class="gift-hint">(Click the gift to unwrap🎁)</h3>
+            <div class="gift-img" id="gift-image-chiefs-dancing" data-gif="images/gift-image-chiefs-dancing.gif"></div>
+        </div>
+        
+        <div class="gift-section">
+            <h2 class="gift-title">Thanks for working your magic in the kitchen and making so much good food!</h2>
+            <div class="gift-img" id="gift-image-kitchen-magic" data-gif="images/gift-image-kitchen-magic.gif"></div>
+        </div>
+        
+        <div class="gift-section">
+            <h2 class="gift-title">Always finding great prices!</h2>
+            <div class="gift-img" id="gift-image-cheaper-price" data-gif="images/gift-image-cheaper-price.gif"></div>
+        </div>
+        
+        <div class="gift-section">
+            <h2 class="gift-title">The most Adventurous American Dude around!</h2>
+            <div class="gift-img" id="gift-image-american-stunt" data-gif="images/gift-image-american-stunt.gif"></div>
+        </div>
+        
+         <div class="gift-section">
+            <h2 class="gift-title">A big Happy Birthday to the life of the party, keep partying hard!</h2>
+            <div class="gift-img" id="gift-image-live-it-up" data-gif="images/gift-image-live-it-up.gif"></div>
+        </div>
+        
+    
+<script>
+(function () {
+  // CONFIG
+  var LAZY_PRELOAD_AFTER_OPEN = true; // optionally create an Image after opening to buffer later frames
+  var PRELOAD_DELAY_MS = 300;         // after opening, preload in background
+  var UNLOAD_ON_CLOSE = true;         // free GIFs when closing to reduce memory on mobile
+
+  // helpers
+  function ensureA11y(el) {
+    if (!el.hasAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.hasAttribute('role')) el.setAttribute('role', 'button');
+    if (!el.hasAttribute('aria-pressed')) el.setAttribute('aria-pressed', 'false');
+  }
+
+  function setOpen(el, open){
+    if (open) {
+      // Respect prefers-reduced-motion: do not auto-play animated gifs if user prefers reduced motion
+      var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReduced) {
+        // show a static cover instead
+        el.style.backgroundImage = 'url("images/chiefs-wrapping.png")';
+      } else {
+        // Choose small variant for narrow viewports if available
+        var smallGif = el.dataset.gifSmall; // optional attribute for mobile-optimized gifs
+        var gif = (window.innerWidth <= 420 && smallGif) ? smallGif : el.dataset.gif;
+        if (gif && !el.dataset.loaded) {
+          // set inline background to the gif URL (this triggers the download when opened)
+          el.style.backgroundImage = 'url("' + gif + '")';
+          el.dataset.loaded = 'true';
+          if (LAZY_PRELOAD_AFTER_OPEN) {
+            setTimeout(function(){
+              var img = new Image();
+              img.src = gif;
+            }, PRELOAD_DELAY_MS);
+          }
+        } else if (gif) {
+          // already loaded previously - ensure it's set
+          el.style.backgroundImage = 'url("' + gif + '")';
+        }
+        // If no gif found, fallback to cover
+        if (!gif) el.style.backgroundImage = 'url("images/chiefs-wrapping.png")';
+      }
+      el.classList.add('open');
+      if (el.getAttribute('role') === 'button') el.setAttribute('aria-pressed', 'true');
+    } else {
+      el.classList.remove('open');
+      if (el.getAttribute('role') === 'button') el.setAttribute('aria-pressed', 'false');
+      // Optionally unload the GIF to free memory on mobile devices
+      if (UNLOAD_ON_CLOSE) {
+        // revert to cover image
+        el.style.backgroundImage = 'url("images/chiefs-wrapping.png")';
+        // keep dataset.loaded so re-open won't re-download if you want to preserve it; to force re-download remove dataset.loaded
+        // delete el.dataset.loaded;
+      }
+    }
+  }
+
+  // Option: ensure only one gift is open at a time
+  function closeOthers(current) {
+    document.querySelectorAll('.gift-img.open').forEach(function(other){
+      if (other !== current) setOpen(other, false);
+    });
+  }
+
+  // Activation handler
+  function activate(el) {
+    // close others -> comment out if not desired
+    closeOthers(el);
+    setOpen(el, !el.classList.contains('open'));
+  }
+
+  // attach handlers
+  var gifts = Array.from(document.querySelectorAll('.gift-img'));
+  gifts.forEach(ensureA11y);
+
+  if (window.PointerEvent) {
+    gifts.forEach(function(el){
+      var pointerDown = false;
+      el.addEventListener('pointerdown', function(e){
+        // prevent built-in double-activation or dragging
+        pointerDown = true;
+      });
+      el.addEventListener('pointerup', function(e){
+        if (!e.isPrimary) return;
+        // quick guard to avoid accidental drag taps
+        if (pointerDown) activate(el);
+        pointerDown = false;
+      });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(el); }
+      });
+    });
+  } else if ('ontouchend' in window) {
+    // older touch fallback
+    gifts.forEach(function(el){
+      var touched = false;
+      el.addEventListener('touchend', function(e){
+        touched = true;
+        activate(el);
+        setTimeout(function(){ touched = false; }, 300);
+      }, {passive:true});
+      el.addEventListener('click', function(e){
+        if (touched) return; // ignore synthetic click after touch
+        activate(el);
+      });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(el); }
+      });
+    });
+  } else {
+    // basic click fallback
+    gifts.forEach(function(el){
+      el.addEventListener('click', function(){ activate(el); });
+      el.addEventListener('keydown', function(e){
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); activate(el); }
+      });
+    });
+  }
+})();
+</script>
+</footer>
+</body>
+</html>

@@ -1,0 +1,139 @@
+body {
+    text-align: center;
+    font-family: 'Happy Monkey', cursive;
+    background: linear-gradient(#b10808, #e54b4b);
+    color: #d4c712;
+}
+
+h1, h2, h3, h4, p {
+    text-shadow: 0 0 2px rgb(198, 180, 11);
+}
+
+#step-dad {
+  width: min(180px, 30vw); /* scale down on small screens */
+  aspect-ratio: 1 / 1;     /* keeps it square so radius makes a circle */
+  border-radius: 50%;
+  display: block;
+  object-fit: cover;
+  border: 6px solid #d4c712;
+  overflow: hidden;
+  font-size: large;
+}
+
+#bday-age {
+    background: #1f08087a;
+    padding: 5px 8px;
+    border-radius: 5px;
+    margin: 5px 0 10px 0;
+}
+
+#bday-date {
+    margin: 0;
+    background: #1f08087a;
+    padding: 5px 8px;
+    border-radius: 5px;
+}
+
+#header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+/* Responsive headings */
+h1 { font-size: clamp(24px, 4.5vw, 36px); }
+h2 { font-size: clamp(18px, 3.2vw, 26px); }
+
+
+.gift-section {
+    margin-top: 50px;
+}
+
+.gift-title {
+    margin-bottom: 10px;
+}
+
+.gift-hint {
+    margin-top: 0;
+}
+
+
+/* Responsive/touch friendly gift images */
+.gift-img {
+  margin: 20px auto;
+  width: 90%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1;            /* square container */
+  border: 6px solid white;
+  border-radius: 10px;
+  background-image: url("images/chiefs-wrapping.png"); /* default cover */
+  background-size: cover;
+  background-position: center;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: rgba(0,0,0,0.12);
+  min-width: 44px; min-height: 44px; /* good minimum tap target */
+  transition: box-shadow 150ms ease, transform 120ms ease;
+  will-change: transform;
+}
+
+/* small pressed feedback for touch */
+.gift-img:active { transform: translateY(1px); }
+
+/* Focus style for keyboard users */
+.gift-img:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px rgba(255,255,255,0.25);
+}
+
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .gift-img { transition: none; }
+}
+
+/* Note: GIF background-images are loaded via JS on demand to avoid mobile preloading and high data usage.
+   If you want to define a static fallback image when closed, the JS will set it to images/BG-gift-cover.png.
+   Keep per-gift small variants in HTML using data-gif-small if you have optimized mobile versions. */
+
+/* Enforce requested font size scale:
+   largest = 20px, middle = 17px, smallest = 14px
+   Place this at the end of styles.css so it overrides earlier rules. */
+
+/* safer global base — does not force every element */
+body {
+  font-family: 'Happy Monkey', cursive;
+  font-size: 14px; /* base; html clamp() will still work if you remove this */
+  line-height: 1.3;
+}
+
+/* Middle size: headings and main labels */
+h2, h3, .gift-title, .gift-hint, .gift-section h2 {
+  font-size: 17px;
+  line-height: 1.25;
+}
+
+/* Largest: main page title */
+h1 {
+  font-size: 20px;
+  line-height: 1.15;
+  margin-top: 0.2em;
+  margin-bottom: 0.4em;
+}
+
+/* Small helper text (if you used .gift-hint for hints, keep them 14 by overriding) */
+.gift-hint, small {
+  font-size: 14px;
+}
+
+/* If some selectors elsewhere still override these sizes, increase specificity here: */
+body h1 { font-size: 20px; }
+body h2, body .gift-title { font-size: 17px; }
+body p, body .gift-hint { font-size: 14px; }
+
+/* Optional: ensure headings are not too large on very small screens */
+@media (max-width: 420px) {
+  h1 { font-size: 18px; }   /* slightly reduce on very small phones */
+  h2, h3, .gift-title { font-size: 16px; }
+}
+
